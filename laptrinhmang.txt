@@ -1,0 +1,120 @@
+
+### Server
+
+* Tiến trình 1: 
+** Đăng nhập, đăng ky user
+*** Các giao thức
+
+Đăng ký: 101|username|pass
+Đăng nhập: 102|username|pass
+
+***Các hàm chính
+
+**** int login(char username[], char pass[]); trả về 200 nếu qua, 404 nếu không đc
+**** int signin(char username[], char pass[]); trả về 200 nếu tạo đc user, 404 nếu user bị trùng
+
+
+* Tiến trình 2: 
+** Sau khi đủ 3 client đăng nhập , gửi câu hỏi và ô chữ đến 3 client 
+*** Giao thức
+Gửi: 201,nội dung ô chữ và câu hỏi 
+Hàm : Khởi tạo tạo nội dung ô chữ và câu hỏi từ thư viện câu hỏi
+Gửi: 202,trạng thái ô chữ 
+Hàm : Xác định trạng thái ô chữ
+
+
+* Tiến trình 3: 
+** Thông báo trạng thái 3 người chơi (đến lượt quay , chờ)
+*** Giao thức
+Gửi: 301,trạng thái 
+Hàm : Hàm xét trạng thái , client 1 mặc định chơi đầu tiên, 2 client còn lại trạng thái chờ 
+void setTT(int a[])
+	ng chơi có trạng thái đang quay thì đc quay 
+* Tiến trình 4: 
+** Xác nhận kết quả lượt quay
+*** Giao thức
+Gửi: 401,kết quả lượt quay 
+Hàm : Xử lí kết quả , 
+	+ Mất lượt => reset trạng thái rồi chuyển về tiến trình 3
+	+ Thêm lượt => chạy lại hàm
+	+ Các ô số điểm => chạy tiến trình 5
+	
+* Tiến trình 5: 
+** Xác nhận câu trả lời
+*** Giao thức
+Nhận: 501,câu trả lời
+Hàm : Xử lí câu trả lời 
+Nếu câu trả lời là 1 kí tự
+	+ true => trở về tiến trình 2 để gửi lại cho người chơi
+	+ false => trờ về tiến trình 3 để reset trạng thái ng chơi
+Nếu câu trả lời là 1 chuỗi
+	+ true => kết thúc ở tiến trình 6
+	+ false => trờ về tiến trình 3 để reset trạng thái ng chơi
+Gửi : 502, kết quả trả lời
+* Tiến trình 6: 
+** Thông báo kết quả đến ng chơi
+*** Giao thức
+Gửi: 601,kết quả
+Hàm : Xử lí phần thường  
+
+	
+	
+### Clientink
+
+* Tiến trình 1:
+
+** Đăng kys, đăng nhập
+*** Các giao thức
+
+Đăng ký: 101,username,pass
+Đăng nhập: 102,username,pass
+
+* Tiến trình 2:
+
+** Nhận nội dung câu hỏi ô chữ
+*** Giao thức
+Nhận: 201, câu hỏi ô chữ
+Nhận: 202, trạng thái ô chữ 
+
+* Tiến trình 3:
+
+** Nhận trạng thái
+*** Giao thức 
+Nhận: 301, trạng thái 
+	+ đang quay =, tiến trình 4 để nhận kết quả quay từ v
+	+ đang chờ
+
+* Tiến trình 4:
+
+** Nhận kết quả quay
+*** Giao thức 
+Nhận: 401, kết quả quay 
+	+ ô điểm => tiến trình 5 
+	+ thêm lượt => tiến trình 4 restart
+	+ mất lượt => tiến trình 3 
+
+	
+* Tiến trình 5:
+
+**  câu trả lời
+*** Giao thức 
+Gửi : 501, câu trả lời 
+Nhận : 502, nhận trạng thái mới của client sau khi server xử lí
+	Nếu câu trả lời là 1 kí tự
+	+ true => trở về tiến trình 2 để gửi lại cho người chơi
+	+ false => trờ về tiến trình 3 để nhận trạng thái ng chơi
+	Nếu câu trả lời là 1 chuỗi
+	+ true => kết thúc ở tiến trình 6
+	+ false => trờ về tiến trình 3 để reset trạng thái ng chơi
+
+* Tiến trình 6:
+
+** Nhận thông tin phần thưởng
+*** Giao thức 
+Nhận : 601, câu trả lời 
+
+
+
+
+
+
