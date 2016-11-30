@@ -20,12 +20,11 @@ int enter_account(char *user_id, char *passwd){
 	scanf("%[^\n]%*c", user_id);
 	i = 0;
 	while(user_id[i]!='\0'){
-		user_id[i] = toupper(user_id[i]); /* upcase recv_data */
+		user_id[i] = toupper(user_id[i]);
 		i++;
 	}
 	for(i=0; i<strlen(user_id); i++){
-		if(user_id[i]=='_' || 'A'<=user_id[i]/<='Z' || '0'<=user_id[i]<='9'){}
-		else{
+		if( (user_id[i]<48) || (57<user_id[i] && user_id[i]<65) || (user_id[i]>90 && user_id[i]<95) || (user_id[i]>95 && user_id[i]<97) || (user_id[i]>122) ){
 			printf("Ten tai khoan chua ki tu khong hop le!\n");
 			return 0;
 		}

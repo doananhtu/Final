@@ -235,10 +235,12 @@ int main(int argc , char *argv[])
                             if(result == 404){
                                 strcpy(buffer,"404");
                                 send(sd, buffer, strlen(buffer) ,0);
+                                process[i] = PROCESS_1;
                             }
                             else if(result == 200) {
                                 strcpy(buffer,"200");
                                 send(sd, buffer, strlen(buffer), 0);
+                                process[i] = PROCESS_1;
                             }
                         }
                         // =>Log in
@@ -247,11 +249,13 @@ int main(int argc , char *argv[])
                             if(result == 404){
                                 strcpy(buffer,"404");
                                 send(sd, buffer, strlen(buffer) ,0);
+                                process[i]=PROCESS_1;
                             }
                             else if(result == 200){                          
                                 process[i] = PROCESS_2;
                                 strcpy(buffer,"200");
                                 send(sd, buffer, strlen(buffer), 0);
+                                process[i] = PROCESS_2;
                             }
                         }
                     }
