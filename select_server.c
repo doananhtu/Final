@@ -19,29 +19,46 @@
 
 #define PROCESS_2 2
 
+typedef struct
+{
+    int session_id;
+    char user_id[30];
+}session;
+session sess[30];
+
+typedef struct 
+{
+    char user_id[30];
+    int diem;
+    int is_player;
+}player;
+player play[3];
+int count_player = 0;
+/////////////
+void create_player(int id, char *user_id){
+    strcmp(play[id].user_id,user_id);
+    play[id].diem = 0;
+    count_player ++;
+}
+void delete_player(){
+    count_player --;
+}
+/////////////
+void set_status(){
+    int i;
+    for(i=0; i<count_player; i++){
+        if(i == 0)
+            play[i].is_player = 1;
+        else play[i].is_player = 0;
+    }
+}
+/////////////
 char * get_file_name(int i){
     char *s;
     s = (char *)malloc(sizeof(char) *20);
     strcpy(s, "tmp_ .txt\0");
     s[4] = (48 + i);
     return s;
-}
-
-int log_in(char user_id[], char passwd[]){
-    FILE *f_account;
-    f_account = fopen("account.txt","r");
-    char str[30], str2[30];
-    if(f_account == NULL){
-        printf("File account.txt not found!.\n");
-    }
-    while(!feof(f_account)){
-        fscanf(f_account,"%[^\t]\t%[^\n]\n",str,str2);
-        if(strcmp(str,user_id) == 0 && strcmp(str2,passwd)==0 ){
-            return 200;
-        }
-    }
-    fclose(f_account);
-    return 404;
 }
 
 int sign_in(char user_id[], char passwd[]){
@@ -63,6 +80,43 @@ int sign_in(char user_id[], char passwd[]){
     return 200;
 }
 
+int log_in(char user_id[], char passwd[]){
+    FILE *f_account;
+    f_account = fopen("account.txt","r");
+    char str[30], str2[30];
+    if(f_account == NULL){
+        printf("File account.txt not found!.\n");
+    }
+    if( check_log_in(user_id)==1 )
+        return 403;
+    while(!feof(f_account)){
+        fscanf(f_account,"%[^\t]\t%[^\n]\n",str,str2);
+        if(strcmp(str,user_id) == 0 && strcmp(str2,passwd)==0 ){ //dang nhap thanh cong
+            create_player(count_player,user_id);
+            if(count_player = 3)
+                set_status();
+            return 200;
+        }
+    }
+    fclose(f_account);
+    return 404;
+}
+///////////////
+void create_session(int client_socket, char *user_id){
+    strcpy(sess[client_socket].user_id,user_id);
+}
+void delete_session(int client_socket){
+    sess[client_socket].user_id[0] = '\0';
+}
+int check_log_in(char *user_id){
+    int i;
+    for(i=4; i<=34; i++){
+        if( strcmp(sess[i].user_id ,user_id)==0 )
+            return 1;
+        return 0;
+    }
+}
+//////////////
 void string_cut(char *str, char *str1, char *str2, char *str3){
     int i;
     char * token;
@@ -80,7 +134,7 @@ void string_cut(char *str, char *str1, char *str2, char *str3){
 int main(int argc , char *argv[])
 {
     int opt = TRUE;
-    int master_socket , addrlen , new_socket , client_socket[30] , max_clients = 30;
+    int master_socket , addrlen , new_socket , client_socket[3] , max_clients = 3;
     int activity, i, j, valread , sd;
     int max_sd;
     struct sockaddr_in address;
@@ -218,6 +272,8 @@ int main(int argc , char *argv[])
                     {
                         getpeername(sd , (struct sockaddr*)&address , (socklen_t*)&addrlen);
                         printf("Host disconnected , ip %s , port %d \n" , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+                        delete_session(sd);
+                        delete_player();
                         close( sd );
                         client_socket[i] = 0;
                     }
@@ -246,12 +302,18 @@ int main(int argc , char *argv[])
                         // =>Log in
                         else if(process[i] == LOG_IN){
                             result = log_in(user_id,passwd);
+                            if(result == 403){
+                                strcpy(buffer,"403");
+                                send(sd, buffer, strlen(buffer) ,0);
+                                process[i]=PROCESS_1;
+                            }
                             if(result == 404){
                                 strcpy(buffer,"404");
                                 send(sd, buffer, strlen(buffer) ,0);
                                 process[i]=PROCESS_1;
                             }
-                            else if(result == 200){                          
+                            else if(result == 200){
+                                create_session(client_socket[i],user_id);
                                 process[i] = PROCESS_2;
                                 strcpy(buffer,"200");
                                 send(sd, buffer, strlen(buffer), 0);
@@ -264,6 +326,7 @@ int main(int argc , char *argv[])
                     {
                         getpeername(sd , (struct sockaddr*)&address , (socklen_t*)&addrlen);
                         printf("Host disconnected , ip %s , port %d \n" , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+                        delete_session(sd);
                         close( sd );
                         client_socket[i] = 0;
                     }

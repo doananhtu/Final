@@ -31,6 +31,12 @@ int enter_account(char *user_id, char *passwd){
 	}
 	printf("Nhap mat khau: ");
 	scanf("%[^\n]%*c", passwd);
+	for(i=0; i<strlen(user_id); i++){
+		if( (user_id[i]<48) || (57<user_id[i] && user_id[i]<65) || (user_id[i]>90 && user_id[i]<95) || (user_id[i]>95 && user_id[i]<97) || (user_id[i]>122) ){
+			printf("Ten tai khoan chua ki tu khong hop le!\n");
+			return 0;
+		}
+	}
 	return 1;
 }
 
@@ -87,6 +93,12 @@ int log_in(char *user_id, char *passwd){
 		if(strcmp("200",recv_data) == 0){
 			printf("Dang nhap thanh cong!\n");
 			return 1;
+		}
+		else if(strcmp("403",recv_data) == 0){
+			printf("Tai khoan da dang nhap!.\n");
+		}
+		else if(strcmp("404",recv_data) == 0){
+			printf("Sai ten tai khoan hoac mat khau!.\n");
 		}
 	}while(count != 5);
 	printf("Qua so luot dang nhap!.\n");
@@ -149,7 +161,7 @@ int main(){
 			}while(login == 0);
 		}
 		else if(process == 2){
-
+			
 		}
 		else if(process == 3){
 
