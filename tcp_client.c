@@ -14,96 +14,7 @@ char buffer[1024],recv_data[1024];
 struct sockaddr_in server_addr;
 int bytes_sent,bytes_received;
 
-int enter_account(char *user_id, char *passwd){
-	int i;
-	printf("Nhap ten tai khoan: ");
-	scanf("%[^\n]%*c", user_id);
-	i = 0;
-	while(user_id[i]!='\0'){
-		user_id[i] = toupper(user_id[i]);
-		i++;
-	}
-	for(i=0; i<strlen(user_id); i++){
-		if( (user_id[i]<48) || (57<user_id[i] && user_id[i]<65) || (user_id[i]>90 && user_id[i]<95) || (user_id[i]>95 && user_id[i]<97) || (user_id[i]>122) ){
-			printf("Ten tai khoan chua ki tu khong hop le!\n");
-			return 0;
-		}
-	}
-	printf("Nhap mat khau: ");
-	scanf("%[^\n]%*c", passwd);
-	for(i=0; i<strlen(user_id); i++){
-		if( (user_id[i]<48) || (57<user_id[i] && user_id[i]<65) || (user_id[i]>90 && user_id[i]<95) || (user_id[i]>95 && user_id[i]<97) || (user_id[i]>122) ){
-			printf("Ten tai khoan chua ki tu khong hop le!\n");
-			return 0;
-		}
-	}
-	return 1;
-}
-
-int sign_in(char *user_id, char *passwd){
-	int i=0 ;
-	printf("### Dang ky tai khoan\n");
-	do{
-		i = enter_account(user_id,passwd);
-	}while(i==0);
-	buffer[0] = '\0';
-	strcpy(buffer,"101|"); // 101|user_id|passwd
-	strcat(user_id,"|"); strcat(user_id,passwd); 
-	strcat(buffer,user_id);
-	bytes_sent = send(client_sock,buffer,strlen(buffer),0);
-	if(bytes_sent == -1){
-		printf("\nError!Cannot send data to sever!\n");
-		close(client_sock);
-		exit(-1);
-	}
-	bytes_received = recv(client_sock,recv_data,1024,0);
-	if(bytes_received == -1){
-		printf("\nError!Cannot receive data from sever!\n");
-		close(client_sock);
-		exit(-1);
-	}
-	recv_data[bytes_received] = '\0';
-	if(strcmp("200",recv_data) == 0){
-		printf("Tao tai khoan moi thanh cong!.\n");
-	}else printf("Tai khoan da ton tai!.\n");
-}
-
-int log_in(char *user_id, char *passwd){
-	int count = 0;
-	do{
-		count ++;
-		buffer[0] = '\0';
-		strcpy(buffer,"102|"); // 102|user_id|passwd
-		printf("### Dang nhap\n");
-		enter_account(user_id,passwd);
-		strcat(user_id,"|"); strcat(user_id,passwd); strcat(buffer,user_id);
-		bytes_sent = send(client_sock,buffer,strlen(buffer),0);
-		if(bytes_sent == -1){
-		printf("\nError!Cannot send data to sever!\n");
-		close(client_sock);
-		exit(-1);
-		}
-		bytes_received = recv(client_sock,recv_data,1024,0);
-		if(bytes_received == -1){
-			printf("\nError!Cannot receive data from sever!\n");
-			close(client_sock);
-			exit(-1);
-		}
-		recv_data[bytes_received] = '\0';
-		if(strcmp("200",recv_data) == 0){
-			printf("Dang nhap thanh cong!\n");
-			return 1;
-		}
-		else if(strcmp("403",recv_data) == 0){
-			printf("Tai khoan da dang nhap!.\n");
-		}
-		else if(strcmp("404",recv_data) == 0){
-			printf("Sai ten tai khoan hoac mat khau!.\n");
-		}
-	}while(count != 5);
-	printf("Qua so luot dang nhap!.\n");
-	return 0;
-}
+#include "client.h"
 
 int main(){
 	int a, i, login;
@@ -121,14 +32,14 @@ int main(){
 		return 0;
 	}
 	
-	bytes_received = recv(client_sock,buffer,1024,0);
+	bytes_received = recv(client_sock,recv_data,1024,0);
 	if(bytes_received == -1){
 		printf("\nError!Cannot receive data from sever!\n");
 		close(client_sock);
 		exit(-1);
 	}
-	buffer[bytes_received] = '\0';
-	puts(buffer);
+	recv_data[bytes_received] = '\0';
+	puts(recv_data);
 	
 	process = PROCESS_1;
 	while(1){
@@ -160,13 +71,16 @@ int main(){
 				}
 			}while(login == 0);
 		}
-		else if(process == 2){
-			
+		else if(process == PROCESS_2){
+			process2();
+			process = PROCESS_3;
 		}
 		else if(process == 3){
-
+			process3();
+			scanf("%[^\n]%*c", user_id);
+			process == 4;
+			// break;
 		}
-		break;
 	}
 	
 	close(client_sock);
