@@ -1,7 +1,7 @@
 #include "lib.h"
 char cau_hoi[200];
-char o_chu[20], pro[4];
-
+char o_chu[30], pro[4];
+char trang_thai_o_chu[30];
 int enter_account(char *user_id, char *passwd){
 	int i;
 	printf("Nhap ten tai khoan: ");
@@ -138,10 +138,61 @@ int process3(){
 	}
 	recv_data[bytes_received] = '\0';
 	if(strcmp("200",recv_data)==0){
+
 		printf("Ban dang la nguoi duoc choi.\n");
+		return 1;
+
 	}
 	else if(strcmp("404",recv_data)==0){
+
 		printf("Chua den luot choi cua ban.\n");
+		return 0;
 	}
+    else printf("AA : %s\n", recv_data);
 	return 0;
+}
+void check_result(int a,int oso,int process)
+{
+	if (0<=a&&a<=3)
+	{
+		printf("Nguoi choi da quay duoc o 100 diem\n\n");
+		oso = 0;
+
+	}
+	else if (4<=a&&a<=6)
+	{
+		printf("Nguoi choi da quay duoc o 200 diem\n\n");
+		oso =1;
+
+	}
+	else if (7<=a&&a<=9)
+	{
+		printf("Nguoi choi da quay duoc o 300 diem\n\n");
+		oso = 2;
+
+	}
+	else if (10<=a&&a<=12)
+	{
+		printf("Nguoi choi da quay duoc o 400 diem\n\n");
+		oso = 3;
+
+	}
+	else if (13<=a&&a<=14)
+	{
+		printf("Nguoi choi da quay duoc o 500 diem\n\n");
+		oso = 4;
+
+	}
+	else if (a==15)
+	{
+		printf("Nguoi choi da quay duoc o 1000 diem\n\n");
+		oso = 5;
+
+	}
+	else if (a==16) {
+		printf("Nguoi choi da quay duoc o mat luot\n\n");
+		oso = 6;
+		process = 6;
+	}
+
 }
