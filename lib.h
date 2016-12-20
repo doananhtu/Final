@@ -8,6 +8,9 @@
 #define LOG_IN 102
 #define PROCESS_2 2
 #define PROCESS_3 3
+#define PROCESS_4 4
+#define PROCESS_5 5
+#define PROCESS_6 6
 
 typedef struct 
 {
@@ -24,6 +27,25 @@ char * get_file_name(int i){
     strcpy(s, "tmp_ .txt\0");
     s[4] = (48 + i);
     return s;
+}
+char* itoa(int i, char b[]){
+    char const digit[] = "0123456789";
+    char* p = b;
+    if(i<0){
+        *p++ = '-';
+        i *= -1;
+    }
+    int shifter = i;
+    do{ //Move to where representation ends
+        ++p;
+        shifter = shifter/10;
+    }while(shifter);
+    *p = '\0';
+    do{ //Move back, inserting digits as u go
+        *--p = digit[i%10];
+        i = i/10;
+    }while(i);
+    return b;
 }
 
 void string_cut(char *str, char *str1, char *str2, char *str3){
@@ -45,4 +67,6 @@ int random_int(){
 	srand(time(NULL));
 	r = rand() % 30;
 	return r;
-}	
+}
+
+
