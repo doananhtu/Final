@@ -100,7 +100,6 @@ int log_in(char *user_id, char *passwd){
 /////////////////////////
 int process2(){
 	int i;
-	printf("\n### Tro choi bat dau! ###\n\n");
 	bytes_sent = send(client_sock,"...",3,0);
 	if(bytes_sent == -1){
 		printf("\nError!Cannot send data to sever!\n");
@@ -117,6 +116,7 @@ int process2(){
 	recv_data[bytes_received] = '\0';
 	string_cut(recv_data, pro, cau_hoi, o_chu);
 	i = strlen(o_chu);
+    printf("\n### Tro choi bat dau! ###\n\n");
 	printf("O chu cua chung ta gom %d chu cai!\n", i);
 	printf("Cau hoi la: %s\n", cau_hoi);
 	return 0;

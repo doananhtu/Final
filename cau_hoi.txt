@@ -16,7 +16,7 @@ Mot dai tuong vi dai cua Viet Nam la ai?|vonguyengiap
 Truong dai hoc dau tien cua Viet Nam?|quoctugiam
 Mon banh truyen thong trong ngay tet o Viet Nam?|banhtrung
 Ngay tet o mien bac, nguoi dan thuong mua hoa gi?|hoadao
-Canh cua nau voi rau gi?|rauday
+Kimchi Viet Nam la mon an nao?|duamuoi
 Thu do nuoc Viet Nam la thanh pho nao?|hanoi
 Chiec non nao la mot trong nhung bieu tuong truyen thong cua Viet Nam?|nonla
 Quoc hoa cua Viet Nam la gi?|hoasen
